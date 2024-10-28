@@ -1,0 +1,6 @@
+fastapi[standard]
+gtfs-realtime-bindings
+PyMySQL
+structlog
+pandas
+requests
