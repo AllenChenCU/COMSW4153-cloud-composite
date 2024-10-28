@@ -150,6 +150,7 @@ async def request_to_google_maps_service(origin, dest, mode="transit"):
     """Request from Google Map API service given origin and dest"""
     query_origin = origin.replace(" ", "+")
     query_dest = dest.replace(" ", "+")
+    #[TODO] need to modify the google service API to take in a user_id param
     api_endpoint_template = f"http://3.133.129.121:5000/routes?origin={query_origin}&destination={query_dest}&mode={mode}"
     response = requests.get(api_endpoint_template)
     return response.json()
