@@ -6,7 +6,7 @@ Team Name: cloudGPT
 
 The Composite Service repo for the accessible routes application
 
-API deployed on GCP Compute Engine
+Service API deployed on GCP Cloud Run (Paas).
 
 ## Data
 
