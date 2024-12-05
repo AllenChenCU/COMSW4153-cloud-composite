@@ -24,6 +24,7 @@ Tables:
 ## API Usage
 
 Old API Endpoint: http://34.55.117.204:5001/ with Compute Instance
+
 New API Endpoint: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app with PaaS and Docker
 
 ### 1. Query routes and stations
