@@ -146,12 +146,13 @@ async def insert_into_table(query: str, data: List[Any]) -> None:
             logger.info("Database connection is closed.")
 
 
-async def request_to_google_maps_service(origin, dest, mode="transit"):
+async def request_to_google_maps_service(origin, dest, user_id, mode="transit"):
     """Request from Google Map API service given origin and dest"""
     query_origin = origin.replace(" ", "+")
     query_dest = dest.replace(" ", "+")
-    #[TODO] need to modify the google service API to take in a user_id param
-    api_endpoint_template = f"http://3.133.129.121:5000/routes?origin={query_origin}&destination={query_dest}&mode={mode}"
+    # old: http://3.133.129.121
+    api_endpoint = "http://18.118.121.175"
+    api_endpoint_template = f"{api_endpoint}:5000/routes?origin={query_origin}&destination={query_dest}&mode={mode}&user_id={user_id}"
     response = requests.get(api_endpoint_template)
     return response.json()
 

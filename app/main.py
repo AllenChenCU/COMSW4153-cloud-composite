@@ -51,35 +51,41 @@ def read_root():
 
 
 @app.get("/query-routes-and-stations/")
-async def query_routes_and_stations(source: str, destination: str):
-    """Query google maps API and MTA API and return both info
-    remember to add await when querying APIs
-    May need to take in user_id here and pass it to Google map service??
+async def query_routes_and_stations(source: str, destination: str, user_id: str):
+    """Query Google Map Service and MTA Service 
+    and return a list of routes and a list of stations associated with the route
+    for each route. 
     """
-    routes = await request_to_google_maps_service(source, destination, mode="transit")
+    routes = await request_to_google_maps_service(source, destination, user_id, mode="transit")
     all_stations, all_transit_types = await get_stations_from_routes(routes["routes"])
     all_mta_info = await request_to_mta_service(all_stations, all_transit_types)
     results = {
         "routes": routes["routes"], 
         "stations": all_mta_info, 
+        "links": routes["links"], 
         # "query_id": routes["query_id"] ???
     }
     results_json = json.dumps(results)
     return Response(results_json, media_type="application/json")
 
 
-@app.get("query-all-routes-and-stations-by-user/")
-async def query_all_routes_and_stations_by_user(user_id: str):
-    """Call to Google Map API service to retrieve all queries made the user (with pagination)
-    Current status: waiting for Google Map service to be completed.
+@app.get("/query-all-routes-by-user/")
+async def query_all_routes_by_user(user_id: str="125"):
+    """Retrieve all queries made by the user from the Google Map Service. 
+    (with Pagination)
     """
-    pass
+    api_endpoint = "http://18.118.121.175"
+    api_endpoint_template = f"{api_endpoint}:5000/viewed_routes/page/1?limit=10"
+    response = requests.get(api_endpoint_template)
+    results_json = json.dumps(response.json())
+    return Response(results_json, media_type="application/json")
 
 
 @app.post("/save-route/")
 async def save_route(saved_route: SavedRoute):
     """Create SavedRoute record to 
-    the saved_route table and the email notification table
+    the saved_route table and the email notification table. (With HATEOAS and support links)
+
     Example request body: see app/example_route.json for full example
         '{
             "source": "Columbia University", 
@@ -121,6 +127,24 @@ async def save_route(saved_route: SavedRoute):
         {
             "message": "Route is successfully saved!", 
             "route_id": route_id, 
+            "user_id": saved_route_dict["user_id"], 
+            "query_id": saved_route_dict["query_id"], 
+            "source": saved_route_dict["source"], 
+            "destination": saved_route_dict["destination"], 
+            "links": {
+                "self": {
+                    "href": "/save-route/", 
+                    "method": "POST"
+                }, 
+                "get": {
+                    "href": f"/get-saved-routes-and-stations/?user_id={saved_route_dict["user_id"]}", 
+                    "method": "GET"
+                }, 
+                "update": {
+                    "href": f"/unsave-route/?route_id={route_id}", 
+                    "method": "PUT"
+                }
+            }
         }
     )
     return Response(results_json, media_type="application/json")
@@ -129,7 +153,7 @@ async def save_route(saved_route: SavedRoute):
 @app.put("/unsave-route/")
 def unsave_route(route_id: str):
     """Delete SavedRoute record 
-    from the saved_route table and the email notification table
+    from the saved_route table and the email notification table.
     """
 
     # delete in saved_route table
@@ -149,9 +173,11 @@ def unsave_route(route_id: str):
 
 @app.get("/get-saved-routes-and-stations/")
 async def get_saved_routes_and_stations(user_id: str):
-    """Get all saved routes saved by the users previously
+    """Get all saved routes and stations saved by the users previously
     1. Query the database to get saved routes for the user
     2. Retrieve stations from the saved routes and get status of stations
+    The returned list of saved_routes and the list of list of station_from_saved_routes
+    have a one-to-one mapping relationship.
     """
     saved_routes_info = await query_table(GET_SAVED_ROUTE_QUERY, user_id)
     for saved_routes_info_i in saved_routes_info:

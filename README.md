@@ -27,9 +27,12 @@ API Endpoint: http://34.55.117.204:5001/
 
 ### 1. Query routes and stations
 
-Description: Given source and destination as query parameter, this endpoint calls the internal Google Map service API and MTA service API to return the routes and all status information of equipments of the corresponding stations in returned routes. response["routes"] and response["stations"] have an one-to-one mapping relationship. 
+Description: Given source, destination, and user_id as query parameter, this endpoint calls the internal Google Map service API and MTA service API to return the routes and all status information of equipments of the corresponding stations in returned routes. response["routes"] and response["stations"] have an one-to-one mapping relationship. 
 
-Example: http://34.55.117.204:5001/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport
+Example: http://34.55.117.204:5001/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport&user_id=123
+
+Local Example (for testing): http://0.0.0.0:5001/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport&user_id=123
+
 
 ### 2. Save route
 
@@ -38,6 +41,9 @@ Description: Given a request body of SavedRoute model, this endpoint generates a
 Example: 
 ```
 curl -X POST "http://34.55.117.204:5001/save-route/" -H "Content-Type: application/json" -d @app/example_route.json
+
+# local (for testing)
+curl -X POST "http://0.0.0.0:5001/save-route/" -H "Content-Type: application/json" -d @app/example_route.json
 ```
 
 See app/example_route.json for an example of the request body. 
@@ -49,6 +55,9 @@ Description: Given an existing route_id, this endpoint updates / deletes the sav
 Example: 
 ```
 curl -X PUT "http://34.55.117.204:5001/unsave-route/?route_id=360810dd-312c-474d-9fba-e94cb1d53662"
+
+# local (for testing)
+curl -X PUT "http://0.0.0.0:5001/unsave-route/?route_id=aa183d34-ec7e-438f-9885-2125c691fac0"
 ```
 
 ### 4. Get all SAVED routes and stations for the user
@@ -60,15 +69,15 @@ Example: http://34.55.117.204:5001/get-saved-routes-and-stations/?user_id=user12
 OR 
 ```
 curl -X GET "http://34.55.117.204:5001/get-saved-routes-and-stations/?user_id=user123"
+
+# local (for testing)
+curl -X GET "http://0.0.0.0:5001/get-saved-routes-and-stations/?user_id=123"
 ```
 
-### 5. Get all QUERIED routes and stations for the user
-
-TODO
-- Implement this endpoint
-- Need to modify the google service API to take in a user_id param
-- Endpoint query-routes-and-stations needs to take in a user_id param
+### 5. Get all QUERIED routes for the user
 
 Description: Given a user_id, this endpoint calls the google maps service API which in turns queries its database to return all queries made by the user. 
 
-Example: http://34.55.117.204:5001/query-all-routes-and-stations-by-user/?user_id=user123
+Example: http://34.55.117.204:5001/query-all-routes-by-user/?user_id=user123
+
+Local Example (for testing): http://0.0.0.0:5001/query-all-routes-by-user/?user_id=123

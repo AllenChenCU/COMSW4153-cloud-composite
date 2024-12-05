@@ -1,7 +1,7 @@
 {
     "source": "Columbia University",
     "destination": "John F. Kennedy International Airport", 
-    "user_id": "user123", 
+    "user_id": "123", 
     "query_id": "query123", 
     "route": {
         "bounds": {
