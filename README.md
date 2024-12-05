@@ -23,13 +23,14 @@ Tables:
 
 ## API Usage
 
-API Endpoint: http://34.55.117.204:5001/
+Old API Endpoint: http://34.55.117.204:5001/ with Compute Instance
+New API Endpoint: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app with PaaS and Docker
 
 ### 1. Query routes and stations
 
 Description: Given source, destination, and user_id as query parameter, this endpoint calls the internal Google Map service API and MTA service API to return the routes and all status information of equipments of the corresponding stations in returned routes. response["routes"] and response["stations"] have an one-to-one mapping relationship. 
 
-Example: http://34.55.117.204:5001/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport&user_id=123
+Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport&user_id=130
 
 Local Example (for testing): http://0.0.0.0:5001/query-routes-and-stations/?source=Columbia%20University&destination=John%20F.%20Kennedy%20International%20Airport&user_id=123
 
@@ -40,7 +41,7 @@ Description: Given a request body of SavedRoute model, this endpoint generates a
 
 Example: 
 ```
-curl -X POST "http://34.55.117.204:5001/save-route/" -H "Content-Type: application/json" -d @app/example_route.json
+curl -X POST "https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/save-route/" -H "Content-Type: application/json" -d @app/example_route.json
 
 # local (for testing)
 curl -X POST "http://0.0.0.0:5001/save-route/" -H "Content-Type: application/json" -d @app/example_route.json
@@ -54,7 +55,7 @@ Description: Given an existing route_id, this endpoint updates / deletes the sav
 
 Example: 
 ```
-curl -X PUT "http://34.55.117.204:5001/unsave-route/?route_id=360810dd-312c-474d-9fba-e94cb1d53662"
+curl -X PUT "https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/unsave-route/?route_id=ccb12d95-8e66-4931-b74f-255b1bfa9fcb"
 
 # local (for testing)
 curl -X PUT "http://0.0.0.0:5001/unsave-route/?route_id=aa183d34-ec7e-438f-9885-2125c691fac0"
@@ -64,11 +65,11 @@ curl -X PUT "http://0.0.0.0:5001/unsave-route/?route_id=aa183d34-ec7e-438f-9885-
 
 Description: Given a user_id, the endpoint queries the saved_route table to return all saved routes and station equipments info from all saved routes. 
 
-Example: http://34.55.117.204:5001/get-saved-routes-and-stations/?user_id=user123
+Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/get-saved-routes-and-stations/?user_id=123
 
 OR 
 ```
-curl -X GET "http://34.55.117.204:5001/get-saved-routes-and-stations/?user_id=user123"
+curl -X GET "https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/get-saved-routes-and-stations/?user_id=123"
 
 # local (for testing)
 curl -X GET "http://0.0.0.0:5001/get-saved-routes-and-stations/?user_id=123"
@@ -78,6 +79,6 @@ curl -X GET "http://0.0.0.0:5001/get-saved-routes-and-stations/?user_id=123"
 
 Description: Given a user_id, this endpoint calls the google maps service API which in turns queries its database to return all queries made by the user. 
 
-Example: http://34.55.117.204:5001/query-all-routes-by-user/?user_id=user123
+Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/query-all-routes-by-user/?user_id=123
 
 Local Example (for testing): http://0.0.0.0:5001/query-all-routes-by-user/?user_id=123

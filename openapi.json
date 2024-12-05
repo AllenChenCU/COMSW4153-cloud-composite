@@ -1,92 +1,328 @@
 {
-    "openapi": "3.1.0", 
-    "info": {
-        "title": "Composite Service", 
-        "description": "Composite service for the accessible routes app", 
-        "version": "1.0.0"
-    } , 
-    "servers": [
-        {"url": "http://34.55.117.204:5001/", "description": "server on GCP Compute Engine"}
-    ], 
-    "paths": {
-        "/query-routes-and-stations": {
-            "get": {
-                "summary": "Get all routes and stations equipments info", 
-                "description": "Returns a dictionary with a routes field with all routes and a stations field with the status information of equipments of the corresponding stations in returned routes", 
-                "parameters": [
-                    {
-                        "source": "starting address", 
-                        "destination": "ending address"
-                    }
-                ], 
-                "responses": {
-                    "200": {
-                        "description": "A JSON arrays of routes and stations", 
-                        "content": {
-                            "application/json": {
-                                "schema": {"routes": "List", "stations": "List"}
-                            }
-                        }
-                    }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Read Root",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
                 }
+              }
             }
-        }, 
-        "/save-route": {
-            "post": {
-                "summary": "save a route for a user into saved_route table", 
-                "description": "generates a route_id and attaches it with the saved route and creates a record in the saved_route table. A notification record is also asynchronously saved into the email_notification table", 
-                "parameters": [
-                    {
-                        "source": "starting address", 
-                        "destination": "ending address", 
-                        "user_id": "user id", 
-                        "query_id": "query id", 
-                        "route": "json or dict object of the route"
-                    }
-                ], 
-                "responses": {
-                    "201": {
-                        "description": "the route is successfully saved into the saved_route and email_notification tables"
-                    }
-                }
-            }
-        }, 
-        "/unsave-route": {
-            "put": {
-                "summary": "delete the saved route given the route_id", 
-                "description": "delete the saved route associated with the route_id in the saved_route table and the notification record in the email notification table.", 
-                "parameters": [
-                    {
-                        "route_id": "route id"
-                    }
-                ], 
-                "responses": {
-                    "200": {
-                        "description": "the route is successfully deleted from the saved_route and email_notification tables"
-                    }
-                }
-            }
-        }, 
-        "/get-saved-routes-and-stations": {
-            "get": {
-                "summary": "get all saved routes for the user", 
-                "description": "queries the saved_route table to return all saved routes and station equipments info from all saved routes for the user.", 
-                "parameters": [
-                    {
-                        "user_id": "user id"
-                    }
-                ], 
-                "responses": {
-                    "200": {
-                        "description": "A JSON arrays of saved_routes and stations_from_saved_routes", 
-                        "content": {
-                            "application/json": {
-                                "schema": {"saved_routes": "List", "stations_from_saved_routes": "List"}
-                            }
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
+    },
+    "/query-routes-and-stations/": {
+      "get": {
+        "summary": "Query Routes And Stations",
+        "description": "Query Google Map Service and MTA Service \nand return a list of routes and a list of stations associated with the route\nfor each route.",
+        "operationId": "query_routes_and_stations_query_routes_and_stations__get",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Source"
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Destination"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-all-routes-by-user/": {
+      "get": {
+        "summary": "Query All Routes By User",
+        "description": "Retrieve all queries made by the user from the Google Map Service. \n(with Pagination)",
+        "operationId": "query_all_routes_by_user_query_all_routes_by_user__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "125",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/save-route/": {
+      "post": {
+        "summary": "Save Route",
+        "description": "Create SavedRoute record to \nthe saved_route table and the email notification table. (With HATEOAS and support links)\n\nExample request body: see app/example_route.json for full example\n    '{\n        \"source\": \"Columbia University\", \n        \"destination\": \"John F. Kennedy International Airport\", \n        \"user_id\": \"user123\", \n        \"query_id\": \"query123\", \n        \"route\": {\n            \"bounds\": {\n                \"northeast\": {\n                \"lat\": 40.808134,\n                \"lng\": -73.7893588\n                },\n            },\n            \"legs\": [{\"start_address\": \"116th and Broadway, New York, NY 10027, USA\"}]\n        }, \n        ...\n    }'",
+        "operationId": "save_route_save_route__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedRoute"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unsave-route/": {
+      "put": {
+        "summary": "Unsave Route",
+        "description": "Delete SavedRoute record \nfrom the saved_route table and the email notification table.",
+        "operationId": "unsave_route_unsave_route__put",
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Route Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-saved-routes-and-stations/": {
+      "get": {
+        "summary": "Get Saved Routes And Stations",
+        "description": "Get all saved routes and stations saved by the users previously\n1. Query the database to get saved routes for the user\n2. Retrieve stations from the saved routes and get status of stations\nThe returned list of saved_routes and the list of list of station_from_saved_routes\nhave a one-to-one mapping relationship.",
+        "operationId": "get_saved_routes_and_stations_get_saved_routes_and_stations__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "SavedRoute": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "query_id": {
+            "type": "string",
+            "title": "Query Id"
+          },
+          "route": {
+            "type": "object",
+            "title": "Route"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "destination",
+          "user_id",
+          "query_id",
+          "route"
+        ],
+        "title": "SavedRoute"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
 }
