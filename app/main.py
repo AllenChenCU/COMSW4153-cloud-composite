@@ -70,12 +70,12 @@ async def query_routes_and_stations(source: str, destination: str, user_id: str)
 
 
 @app.get("/query-all-routes-by-user/")
-async def query_all_routes_by_user(user_id: str="125"):
+async def query_all_routes_by_user(user_id: str, limit: int=10):
     """Retrieve all queries made by the user from the Google Map Service. 
     (with Pagination)
     """
     api_endpoint = "http://18.118.121.175"
-    api_endpoint_template = f"{api_endpoint}:5000/viewed_routes/page/1?limit=10"
+    api_endpoint_template = f"{api_endpoint}:5000/viewed_routes/page/1?limit={limit}&user_id={user_id}"
     response = requests.get(api_endpoint_template)
     results_json = json.dumps(response.json())
     return Response(results_json, media_type="application/json")

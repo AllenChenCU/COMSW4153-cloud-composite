@@ -80,6 +80,6 @@ curl -X GET "http://0.0.0.0:5001/get-saved-routes-and-stations/?user_id=123"
 
 Description: Given a user_id, this endpoint calls the google maps service API which in turns queries its database to return all queries made by the user. 
 
-Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/query-all-routes-by-user/?user_id=123
+Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/query-all-routes-by-user/?limit=10&user_id=123
 
-Local Example (for testing): http://0.0.0.0:5001/query-all-routes-by-user/?user_id=123
+Local Example (for testing): http://0.0.0.0:5001/query-all-routes-by-user/?limit=10&user_id=123
