@@ -27,7 +27,12 @@ from utils import (
 )
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=["*"], 
+    allow_headers=["*"], 
+    allow_methods=["*"],
+)
 logger = structlog.getLogger(__name__)
 
 
