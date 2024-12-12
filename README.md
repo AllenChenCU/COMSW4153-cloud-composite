@@ -50,6 +50,17 @@ curl -X POST "http://0.0.0.0:5001/save-route/" -H "Content-Type: application/jso
 
 See app/example_route.json for an example of the request body. 
 
+### End-user notification
+Once user saved a route, an confirmation email is sent. 
+```
+local (for testing)
+# Testing
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -d '{"to_email": <add your email here>, "subject": "Testing", "message": "Hi, How are you?"}' \
+     https://us-central1-norse-bond-439820-h5.cloudfunctions.net/function-send-email
+```
+
 ### 3. Unsave route
 
 Description: Given an existing route_id, this endpoint updates / deletes the saved route associated with the route_id in the saved_route table and the notification record in the email notification table. This is done synchronously.

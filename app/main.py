@@ -97,6 +97,7 @@ async def save_route(saved_route: SavedRoute):
             "destination": "John F. Kennedy International Airport", 
             "user_id": "user123", 
             "query_id": "query123", 
+            "to_email": null,
             "route": {
                 "bounds": {
                     "northeast": {
@@ -128,6 +129,23 @@ async def save_route(saved_route: SavedRoute):
     )]
     await insert_into_table(INSERT_EMAIL_NOTIFICATION_QUERY, email_notification_data)
 
+    # send email to user
+    if saved_route_dict["to_email"] != "":
+        try:
+            FaaS_url = "https://us-central1-norse-bond-439820-h5.cloudfunctions.net/function-send-email"
+            payload = {
+                "to_email": saved_route_dict["to_email"], 
+                "subject": "Route Saved", 
+                "message": f"Route with route_id {route_id} from source {saved_route_dict["source"]} to destination {saved_route_dict["destination"]} is saved successfully!"
+            }
+            headers = {"Content-Type": "application/json"}
+            email_response = requests.post(FaaS_url, json=payload, headers=headers).text
+            logger.info(email_response)
+        except Exception as e:
+            logger.info(f"Error: {e}")
+    else:
+        email_response = "No user email is provided."
+
     results_json = json.dumps(
         {
             "message": "Route is successfully saved!", 
@@ -136,6 +154,7 @@ async def save_route(saved_route: SavedRoute):
             "query_id": saved_route_dict["query_id"], 
             "source": saved_route_dict["source"], 
             "destination": saved_route_dict["destination"], 
+            "email_response": email_response,
             "links": {
                 "self": {
                     "href": "/save-route/", 

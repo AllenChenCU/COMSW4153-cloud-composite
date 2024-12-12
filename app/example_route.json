@@ -3,6 +3,7 @@
     "destination": "John F. Kennedy International Airport", 
     "user_id": "123", 
     "query_id": "query123", 
+    "to_email": "",
     "route": {
         "bounds": {
           "northeast": {

@@ -10,6 +10,7 @@ class SavedRoute(BaseModel):
     destination: str
     user_id: str
     query_id: str
+    to_email: str
     route: Dict[str, Any] # take JSON data as well
     
 
