@@ -186,8 +186,8 @@ async def request_to_mta_service(all_stations, all_transit_types):
         for station, transit_type in zip(stations, transit_types):
             if station not in info and transit_type == "SUBWAY":
                 query_station = station.replace(" ", "%20")
-                mta_endpoint = f"https://3.84.62.68/equipments/{query_station}"
-                equipments_info = requests.get(mta_endpoint)
+                mta_endpoint = f"https://comsw4153-mta-service-973496949602.us-central1.run.app/equipments/{query_station}"
+                equipments_info = requests.get(mta_endpoint, verify=False)
                 info[station] = equipments_info.json()
         all_info.append(info)
     return all_info
