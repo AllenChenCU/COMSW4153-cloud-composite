@@ -67,7 +67,7 @@ async def query_routes_and_stations(source: str, destination: str, user_id: str)
     results = {
         "routes": routes["routes"], 
         "stations": all_mta_info, 
-        "links": routes["links"], 
+        "links": routes["_links"], 
         # "query_id": routes["query_id"] ???
     }
     results_json = json.dumps(results)
