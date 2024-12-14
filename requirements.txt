@@ -4,3 +4,4 @@ PyMySQL
 structlog
 pandas
 requests
+python-jose

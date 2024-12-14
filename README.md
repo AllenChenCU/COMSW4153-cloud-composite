@@ -94,3 +94,16 @@ Description: Given a user_id, this endpoint calls the google maps service API wh
 Example: https://comsw4153-cloud-composite-service-973496949602.us-central1.run.app/query-all-routes-by-user/?limit=10&user_id=123&page=1
 
 Local Example (for testing): http://0.0.0.0:5001/query-all-routes-by-user/?limit=10&user_id=123&page=1
+
+
+### Updated endpoints with JWT Tokens
+
+/protected-query-routes-and-stations/
+
+/protected-save-route/
+
+/protected-unsave-route/
+
+/protected-get-saved-routes-and-stations/
+
+/protected-query-all-routes-by-user/
